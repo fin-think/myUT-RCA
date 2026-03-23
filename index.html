@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Analisis DCA Strategik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .serif-title { font-family: 'Crimson Pro', serif; }
+        .corp-navy { background-color: #0f172a; }
+        .shadow-corp { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        
+        /* Hilangkan arrow pada input number */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .mode-active {
+            background-color: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+
+        /* Custom track slider untuk mobile */
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="antialiased bg-slate-50 text-slate-900">
+    <div class="max-w-4xl mx-auto px-4 py-6 md:py-10" id="app">
+        
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-slate-900 pb-6 mb-8 gap-6">
+            <div class="space-y-2 text-left">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 bg-slate-900 flex items-center justify-center rounded">
+                        <i class="fas fa-calculator text-white text-xs"></i>
+                    </div>
+                    <span class="text-[10px] font-bold tracking-widest text-slate-500 uppercase text-left">UT FMC Advisor Pro</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight serif-title text-slate-900">Kalkulator RCA</h1>
+                <p class="text-sm text-slate-500 font-medium">Analisis & Strategi</p>
+            </div>
+
+            <!-- Nama Klien: Align Right -->
+            <div class="flex flex-col items-start md:items-end w-full md:w-auto">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nama Pelanggan</p>
+                <div class="relative w-full md:w-64">
+                    <input type="text" id="clientName" value="Fadilah" 
+                        class="text-xl md:text-2xl font-bold text-slate-900 uppercase focus:outline-none bg-transparent w-full text-left md:text-right border-b border-dashed border-slate-300 focus:border-amber-600 transition-colors">
+                    <div class="h-1 w-12 bg-amber-600 ml-0 md:ml-auto mt-1 rounded-full"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Strategy Toggle -->
+        <div class="mb-8 flex justify-center">
+            <div class="inline-flex p-1 bg-slate-200 rounded-xl w-full max-w-sm">
+                <button id="btnEpf" onclick="setMode('epf')" class="mode-active flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all">
+                    EPF (3 Bln)
+                </button>
+                <button id="btnCash" onclick="setMode('cash')" class="flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-600 transition-all">
+                    Tunai (Bln)
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+            
+            <!-- INPUT COLUMN -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Current Portfolio -->
+                <section class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-5 flex items-center gap-2">
+                        <i class="fas fa-database"></i> Data Semasa
+                    </h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="grid grid-cols-2 gap-3 text-left">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Unit Pegangan</label>
+                                <input type="number" id="currentUnits" value="132346.98" class="w-full mt-1.5 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">NAV Seunit (RM)</label>
+                                <input type="number" id="currentNAV" value="0.3721" step="0.0001" class="w-full mt-1.5 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold">
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase italic">Kos Purata Sekarang (RM)</label>
+                            <input type="number" id="avgCostNow" value="0.3778" step="0.0001" class="w-full mt-1.5 p-3 bg-slate-900 text-amber-500 border-none rounded-lg font-bold text-lg tracking-tight">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Strategy Input -->
+                <section class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-5 flex items-center gap-2">
+                        <i class="fas fa-plus-circle"></i> Pelan Tambahan
+                    </h3>
+                    <div class="space-y-5 text-left">
+                        <div id="topupContainer" class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                            <label id="topupLabel" class="text-[10px] font-bold text-blue-800 uppercase block mb-1">Top-up Suku Tahunan (RM)</label>
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-sm font-bold text-blue-800">RM</span>
+                                <input type="number" id="topupAmount" value="10000" class="w-full bg-transparent border-none focus:ring-0 font-black text-2xl text-blue-900 p-0">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase italic">Anggaran Pulangan Tahunan (%)</label>
+                            <input type="number" id="expectedROI" value="8" class="w-full mt-1.5 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Market Logic Slider -->
+                <section class="bg-slate-900 p-5 md:p-6 rounded-xl text-white">
+                    <h3 class="text-[11px] font-black text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <i class="fas fa-chart-line"></i> Simulasi Harga Pasaran
+                    </h3>
+                    <p class="text-[10px] text-slate-400 mb-5 leading-relaxed text-left italic">Ubah harga untuk lihat impak kepada kos purata.</p>
+                    <input type="range" id="priceSim" min="0.10" max="0.45" step="0.01" value="0.37" class="w-full accent-amber-500 cursor-pointer">
+                    <div class="flex justify-between mt-3 text-[11px] font-bold font-mono text-amber-500">
+                        <span>RM 0.10</span>
+                        <span id="simVal" class="bg-amber-500 text-slate-900 px-2 py-0.5 rounded shadow-sm">RM 0.3700</span>
+                        <span>RM 0.45</span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- RESULT COLUMN -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Main Dashboard -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm text-left">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Nilai Semasa (Market)</p>
+                        <p class="text-xl md:text-2xl font-black text-slate-900" id="displayMarketValue">RM 0.00</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-amber-600 shadow-sm text-left">
+                        <p class="text-[10px] font-bold text-amber-600 uppercase mb-1">Total Modal (10 Thn)</p>
+                        <p class="text-xl md:text-2xl font-black text-slate-900" id="displayTotalInvested">RM 0.00</p>
+                    </div>
+                </div>
+
+                <!-- Projection Table -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                        <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-widest">Projeksi 10 Tahun</h4>
+                        <span id="badgeMode" class="text-[9px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold">MODE EPF</span>
+                    </div>
+                    
+                    <!-- Content Card (DCA) -->
+                    <div class="p-5 border-b border-slate-50">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="text-left">
+                                <span class="text-[10px] font-bold text-amber-600 uppercase block mb-1">Pelan Aktif (DCA)</span>
+                                <p class="text-2xl font-black text-slate-900" id="valActive10">RM 0.00</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Unit Akhir</span>
+                                <p class="text-sm font-bold text-slate-700" id="newUnitsCount">0.00</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-amber-50 p-3 rounded-lg border border-amber-100">
+                            <div class="text-left">
+                                <span class="text-[9px] font-bold text-amber-800 uppercase block">Kos Purata Baru</span>
+                                <p class="text-lg font-black text-amber-900" id="newAvgCost">0.0000</p>
+                            </div>
+                            <div class="text-right">
+                                <span id="costReduction" class="text-[10px] font-bold text-green-600 bg-white px-2 py-1 rounded shadow-sm border border-green-100 italic">Penurunan: 0.0000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Card (Static) -->
+                    <div class="p-5 bg-slate-50/50">
+                        <div class="flex justify-between items-center opacity-60">
+                            <div class="text-left">
+                                <span class="text-[9px] font-bold text-slate-500 uppercase block">Pelan Statik (Kekal)</span>
+                                <p class="text-base font-bold text-slate-700" id="valStatic10">RM 0.00</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[9px] font-bold text-slate-500 uppercase block">Kos Kekal</span>
+                                <p class="text-sm font-bold text-slate-700" id="staticAvgCost">0.0000</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-blue-900 p-5 rounded-xl text-white shadow-md text-left">
+                        <h4 class="text-[10px] font-bold text-blue-300 uppercase mb-3 tracking-widest">Kenapa Perlu RCA?</h4>
+                        <ul class="text-[11px] space-y-2.5 font-medium leading-relaxed">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-400 mt-0.5"></i>
+                                <span>Menggandakan jumlah unit pegangan.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-400 mt-0.5"></i>
+                                <span>Menurunkan kos purata secara strategik.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-emerald-900 p-5 rounded-xl text-white shadow-md flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-[10px] font-bold text-emerald-300 uppercase mb-3 tracking-widest text-center">Multiplier Unit</h4>
+                            <p class="text-3xl font-black text-center mb-1" id="unitMult">0x</p>
+                            <p class="text-[9px] text-center text-emerald-300 uppercase font-bold tracking-widest">Gandaan Aset</p>
+                        </div>
+                        <p class="text-[10px] text-center mt-3 pt-3 border-t border-emerald-800 italic opacity-80" id="addedUnits">+0 Unit Baru</p>
+                    </div>
+                </div>
+
+                <!-- Opportunity Cost Banner -->
+                <section class="bg-white border-2 border-amber-600 p-6 rounded-xl relative overflow-hidden">
+                    <div class="relative z-10 text-center space-y-3">
+                        <h3 class="text-amber-800 font-black uppercase tracking-tighter text-sm">Ketirisan Keuntungan (10 Tahun)</h3>
+                        <p class="text-3xl md:text-4xl font-black text-slate-900 leading-none" id="oppCost10">RM 0.00</p>
+                        <p class="text-[10px] text-slate-500 font-bold max-w-xs mx-auto">Nilai yang "hangus" jika anda memilih untuk tidak bertindak hari ini.</p>
+                    </div>
+                    <i class="fas fa-frown-open absolute -bottom-4 -right-4 text-7xl text-amber-50 opacity-10"></i>
+                </section>
+            </div>
+        </div>
+
+        <footer class="mt-12 pt-8 border-t border-slate-200 text-center">
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.4em]">UT Advisor Pro • Strategic Analysis</p>
+        </footer>
+    </div>
+
+    <script>
+        let currentMode = 'epf'; 
+
+        const inputs = [
+            'currentUnits', 'currentNAV', 'avgCostNow', 'topupAmount', 'expectedROI', 'priceSim'
+        ];
+
+        function setMode(mode) {
+            currentMode = mode;
+            const btnEpf = document.getElementById('btnEpf');
+            const btnCash = document.getElementById('btnCash');
+            const topupLabel = document.getElementById('topupLabel');
+            const badgeMode = document.getElementById('badgeMode');
+            const topupContainer = document.getElementById('topupContainer');
+
+            if (mode === 'epf') {
+                btnEpf.classList.add('mode-active');
+                btnCash.classList.remove('mode-active');
+                topupLabel.innerText = "Top-up Suku Tahunan (RM)";
+                badgeMode.innerText = "MODE EPF";
+                topupContainer.className = "p-4 bg-blue-50 border border-blue-100 rounded-xl";
+            } else {
+                btnCash.classList.add('mode-active');
+                btnEpf.classList.remove('mode-active');
+                topupLabel.innerText = "Top-up Bulanan (RM)";
+                badgeMode.innerText = "MODE TUNAI";
+                topupContainer.className = "p-4 bg-emerald-50 border border-emerald-100 rounded-xl";
+            }
+            calculate();
+        }
+
+        function formatCurrency(value) {
+            return "RM " + value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatUnits(value) {
+            return value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calculate() {
+            const units = parseFloat(document.getElementById('currentUnits').value) || 0;
+            const navOriginal = parseFloat(document.getElementById('currentNAV').value) || 0;
+            const avgCost = parseFloat(document.getElementById('avgCostNow').value) || 0;
+            const topup = parseFloat(document.getElementById('topupAmount').value) || 0;
+            const annualRoi = (parseFloat(document.getElementById('expectedROI').value) || 0) / 100;
+            
+            const simPrice = parseFloat(document.getElementById('priceSim').value) || navOriginal;
+            document.getElementById('simVal').innerText = "RM " + simPrice.toFixed(4);
+
+            const marketValueNow = units * navOriginal;
+            document.getElementById('displayMarketValue').innerText = formatCurrency(marketValueNow);
+
+            // 1. Static Plan
+            const static10 = marketValueNow * Math.pow(1 + annualRoi, 10);
+            document.getElementById('valStatic10').innerText = formatCurrency(static10);
+            document.getElementById('staticAvgCost').innerText = avgCost.toFixed(4);
+
+            // 2. Active Plan
+            let frequency = (currentMode === 'epf') ? 4 : 12;
+            let years = 10;
+            let totalTopup10 = topup * frequency * years;
+            
+            function getFV(pv, pmt, r, y, f) {
+                const fvPV = pv * Math.pow(1 + r, y);
+                const ratePerPeriod = r / f;
+                const totalPeriods = y * f;
+                const fvPMT = pmt * ((Math.pow(1 + ratePerPeriod, totalPeriods) - 1) / ratePerPeriod);
+                return fvPV + fvPMT;
+            }
+
+            const active10 = getFV(marketValueNow, topup, annualRoi, 10, frequency);
+            document.getElementById('valActive10').innerText = formatCurrency(active10);
+            document.getElementById('displayTotalInvested').innerText = formatCurrency(totalTopup10);
+
+            // 3. Unit Projection
+            const estimatedNewUnits = totalTopup10 / simPrice;
+            const totalUnits10 = units + estimatedNewUnits;
+            document.getElementById('newUnitsCount').innerText = formatUnits(totalUnits10);
+
+            const totalCapital = (units * avgCost) + totalTopup10;
+            const newAvg = totalCapital / totalUnits10;
+            document.getElementById('newAvgCost').innerText = newAvg.toFixed(4);
+            
+            const reduction = avgCost - newAvg;
+            document.getElementById('costReduction').innerText = "Penurunan: " + reduction.toFixed(4);
+
+            document.getElementById('addedUnits').innerText = "+" + formatUnits(estimatedNewUnits) + " Unit Baru";
+            const multiplier = totalUnits10 / units;
+            document.getElementById('unitMult').innerText = (multiplier || 0).toFixed(1) + "x";
+
+            // 4. Opportunity Cost
+            const oppCost = active10 - static10;
+            document.getElementById('oppCost10').innerText = formatCurrency(oppCost);
+        }
+
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', calculate);
+        });
+
+        window.onload = () => {
+            calculate();
+        };
+    </script>
+</body>
+</html>
