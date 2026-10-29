@@ -3,411 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Analisis RCA Strategik</title>
+    <title>Kalkulator ACU Unit Trust</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        app: {
+                            bg: '#0F111A',
+                            card: '#1A1D2C',
+                            border: '#2A2D40',
+                            accent: '#FCE181',
+                            accentHover: '#E5C965',
+                            textDark: '#4A3B08',
+                            green: '#4ADE80',
+                            greenBg: '#132B22',
+                            greenBorder: '#1F4733',
+                            red: '#F87171',
+                            redBg: '#2D1618',
+                            redBorder: '#4A2327',
+                            gray: '#94A3B8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
         body {
-            background-color: #f8fafc;
-            font-family: 'Inter', sans-serif;
-            color: #1e293b;
-            -webkit-tap-highlight-color: transparent;
+            background-color: #0F111A;
+            color: #F8FAFC;
         }
-        
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
         }
-
-        .mode-active {
-            background-color: #0f172a;
-            color: white;
-            border-color: #0f172a;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            height: 8px;
-            border-radius: 4px;
-            background: #e2e8f0;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #f59e0b;
-            cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        input[type=number] {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
-<body class="antialiased bg-slate-50 text-slate-900">
-    <div class="max-w-4xl mx-auto px-4 py-6 md:py-10" id="app">
+<body class="min-h-screen p-4 md:p-8 font-sans antialiased">
+
+    <div class="max-w-7xl mx-auto space-y-8">
         
-        <!-- Header Section -->
-        <header class="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-slate-900 pb-6 mb-8 gap-6">
-            <div class="space-y-2 text-left">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-slate-900 flex items-center justify-center rounded shadow-sm">
-                        <i class="fas fa-calculator text-white text-[10px]"></i>
-                    </div>
-                    <span class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">FMC UT Advisor Pro</span>
-                </div>
-                <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest text-slate-900 uppercase">Kalkulator RCA</h1>
-                <p class="text-sm text-slate-500 font-medium italic">Analisis Penarasan Avg Cost/Unit & Gandaan Aset</p>
-            </div>
-
-            <div class="flex flex-col items-start md:items-end w-full md:w-auto">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nama Pelanggan</p>
-                <div class="relative w-full md:w-64">
-                    <input type="text" id="clientName" value="Nama" 
-                        class="text-xl md:text-2xl font-bold text-slate-900 uppercase focus:outline-none bg-transparent w-full text-left md:text-right border-b border-dashed border-slate-300 focus:border-amber-600 transition-colors">
-                    <div class="h-1 w-12 bg-amber-600 ml-0 md:ml-auto mt-1 rounded-full"></div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Strategy Toggle -->
-        <div class="mb-8 flex justify-center px-2">
-            <div class="inline-flex p-1 bg-slate-200 rounded-xl w-full max-w-sm shadow-inner border border-slate-300">
-                <button id="btnEpf" onclick="setMode('epf')" class="mode-active flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all">
-                    EPF (3 Bln)
-                </button>
-                <button id="btnCash" onclick="setMode('cash')" class="flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-600 transition-all">
-                    Tunai (Bln)
-                </button>
-            </div>
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-bold text-white">Kalkulator ACU Unit Trust</h1>
+            <p class="text-app-gray">Kira kesan Averaging Down/Up untuk pelaburan anda</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+        <!-- Grid Layout Kiri & Kanan -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
-            <!-- INPUT COLUMN -->
-            <div class="lg:col-span-5 space-y-6">
-                <!-- Data Pegangan Semasa -->
-                <section class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-5 flex items-center gap-2">
-                        <i class="fas fa-database text-[10px]"></i> Data Pegangan Semasa
-                    </h3>
-                    <div class="space-y-4 text-left">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2 sm:col-span-1">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1.5">Unit Pegangan</label>
-                                <input type="number" id="currentUnits" value="132346.98" step="0.01" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                            </div>
-                            <div class="col-span-2 sm:col-span-1">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1.5">Harga Pasaran Semasa</label>
-                                <input type="number" id="currentNAV" value="0.3721" step="0.0001" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                            </div>
-                        </div>
-
-                        <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 flex justify-between items-center">
-                            <span class="text-[10px] font-bold text-blue-800 uppercase italic">Nilai Pasaran Hari Ini</span>
-                            <span class="text-sm font-black text-blue-900" id="displayMarketValue">RM 0.00</span>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1.5">Modal Asal (RM)</label>
-                                <input type="number" id="initialCapital" value="50000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1.5">Avg Cost/Unit Sedia Ada</label>
-                                <input type="number" id="avgCostNow" value="0.3778" step="0.0001" class="w-full p-2.5 bg-slate-900 text-amber-500 border-none rounded-lg font-bold text-sm tracking-tight outline-none">
-                            </div>
+            <!-- RUANGAN KIRI: Input Section -->
+            <div class="lg:col-span-5 bg-app-card rounded-2xl p-6 border border-app-border shadow-xl flex flex-col h-full">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 flex-1 mb-6">
+                    <!-- Unit Pegangan -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-app-gray uppercase tracking-wider">Unit Pegangan Sedia Ada</label>
+                        <div class="relative">
+                            <input type="number" id="inputUnit" step="any" class="w-full bg-[#0F111A] border border-app-border rounded-lg py-3 px-4 text-white focus:outline-none focus:border-app-accent transition-colors" value="134093.00">
+                            <span class="absolute right-4 top-3 text-app-gray">unit</span>
                         </div>
                     </div>
-                </section>
 
-                <!-- Pelan Tambahan -->
-                <section class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="text-[11px] font-black text-emerald-600 uppercase tracking-widest mb-5 flex items-center gap-2">
-                        <i class="fas fa-plus-circle text-[10px]"></i> Pelan Top-Up (10 Tahun)
-                    </h3>
-                    <div class="space-y-5 text-left">
-                        <div id="topupContainer" class="p-4 bg-blue-50 border border-blue-100 rounded-xl transition-colors">
-                            <label id="topupLabel" class="text-[10px] font-bold text-blue-800 uppercase block mb-1">Top-up Suku Tahunan (RM)</label>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-sm font-bold text-blue-800">RM</span>
-                                <input type="number" id="topupAmount" value="10000" class="w-full bg-transparent border-none focus:ring-0 font-black text-2xl text-blue-900 p-0">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1.5 italic">Anggaran Harga Belian Top-Up</label>
-                            <input type="number" id="avgPurchasePrice" value="0.3721" step="0.0001" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-emerald-500">
-                            <p class="text-[9px] text-slate-400 mt-1">*Harga purata unit baru yang akan dibeli.</p>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1.5 italic">Anggaran ROI Setahun (%)</label>
-                            <input type="number" id="expectedROI" value="8" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                    <!-- ACU Semasa -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-app-gray uppercase tracking-wider">ACU Semasa (RM)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3 text-app-gray">RM</span>
+                            <input type="number" id="inputACU" step="any" class="w-full bg-[#0F111A] border border-app-border rounded-lg py-3 pl-12 pr-4 text-white focus:outline-none focus:border-app-accent transition-colors" value="0.3729">
                         </div>
                     </div>
-                </section>
 
-                <!-- Simulasi Harga Jualan -->
-                <section class="bg-slate-900 p-6 rounded-2xl text-white shadow-xl">
-                    <h3 class="text-[11px] font-black text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <i class="fas fa-bullseye"></i> Sasaran Harga Jualan (Tahun 10)
-                    </h3>
-                    <input type="range" id="priceSim" min="0.10" max="1.50" step="0.01" value="0.55" class="w-full accent-amber-500 cursor-pointer h-2 rounded-lg appearance-none">
-                    <div class="flex justify-between mt-4 text-[11px] font-bold font-mono text-amber-500">
-                        <span>RM 0.10</span>
-                        <span id="simVal" class="bg-amber-500 text-slate-900 px-3 py-1 rounded-md shadow-lg transform -translate-y-1">RM 0.5500</span>
-                        <span>RM 1.50</span>
+                    <!-- NAV Semasa -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-app-gray uppercase tracking-wider">NAV Semasa (Harga Baru RM)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3 text-app-gray">RM</span>
+                            <input type="number" id="inputNAV" step="any" class="w-full bg-[#0F111A] border border-app-border rounded-lg py-3 pl-12 pr-4 text-white focus:outline-none focus:border-app-accent transition-colors" value="0.3600">
+                        </div>
                     </div>
-                </section>
+
+                    <!-- Jumlah Pelaburan -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-app-gray uppercase tracking-wider">Jumlah Pelaburan Tambahan</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3 text-app-gray">RM</span>
+                            <input type="number" id="inputInvest" step="any" class="w-full bg-[#0F111A] border border-app-border rounded-lg py-3 pl-12 pr-4 text-white focus:outline-none focus:border-app-accent transition-colors" value="10000.00">
+                        </div>
+                    </div>
+
+                    <!-- Caj Perkhidmatan -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-app-gray uppercase tracking-wider">Caj Perkhidmatan (%)</label>
+                        <div class="relative">
+                            <input type="number" id="inputCharge" step="any" class="w-full bg-[#0F111A] border border-app-border rounded-lg py-3 px-4 pr-10 text-white focus:outline-none focus:border-app-accent transition-colors" value="3.00">
+                            <span class="absolute right-4 top-3 text-app-gray">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button onclick="calculate()" class="w-full bg-app-accent hover:bg-app-accentHover text-app-textDark font-bold text-lg py-4 rounded-xl shadow-lg transition-all transform hover:scale-[1.01] active:scale-95 mt-auto">
+                    Kira ACU
+                </button>
             </div>
 
-            <!-- RESULT COLUMN -->
-            <div class="lg:col-span-7 space-y-6">
+            <!-- RUANGAN KANAN: Results Section -->
+            <div id="resultsSection" class="lg:col-span-7 bg-app-card rounded-2xl p-6 border border-app-border shadow-xl flex flex-col h-full space-y-6 hidden animate-fade-in">
                 
-                <!-- Total Modal -->
-                <div class="bg-slate-900 p-6 rounded-2xl shadow-xl text-left border-b-4 border-amber-600">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i class="fas fa-coins text-amber-500 text-[10px]"></i>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Komitmen Modal (10 Thn)</p>
+                <!-- SEBELUM PENAMBAHAN -->
+                <div>
+                    <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-3">Sebelum Penambahan</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-[#0F111A] rounded-xl p-5 border border-app-border flex flex-col justify-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">Unit Pegangan</p>
+                            <p class="text-lg font-bold" id="resOldUnits">0.00</p>
+                            <p class="text-xs text-app-gray mt-1">unit</p>
+                        </div>
+                        <div class="bg-[#0F111A] rounded-xl p-5 border border-app-border flex flex-col justify-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">ACU Semasa</p>
+                            <p class="text-lg font-bold">RM <span id="resOldACU">0.0000</span></p>
+                            <p class="text-xs text-app-gray mt-1">RM/unit</p>
+                        </div>
+                        <div class="bg-[#0F111A] rounded-xl p-5 border border-app-border flex flex-col justify-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">Nilai Portfolio</p>
+                            <p class="text-lg font-bold">RM <span id="resOldValue">0.00</span></p>
+                            <p class="text-xs text-app-gray mt-1">@ NAV semasa</p>
+                        </div>
                     </div>
-                    <p class="text-3xl md:text-4xl font-black text-white" id="displayTotalInvested">RM 0.00</p>
                 </div>
 
-                <!-- Projection Card -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden text-left">
-                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                        <h4 class="text-[11px] font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                            <i class="fas fa-rocket text-[10px] text-amber-600"></i> Unjuran Nilai Aset (10 Tahun)
-                        </h4>
-                        <span id="badgeMode" class="text-[9px] bg-slate-900 text-white px-2.5 py-1 rounded-full font-bold uppercase tracking-tight">MODE EPF</span>
+                <!-- BUTIRAN PELABURAN BAHARU -->
+                <div>
+                    <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-3">Butiran Pelaburan Baharu</h3>
+                    <div class="bg-[#0F111A] rounded-xl p-1 border border-app-border">
+                        <div class="flex justify-between items-center p-3 border-b border-app-border/50">
+                            <span class="text-app-gray text-sm">Jumlah pelaburan</span>
+                            <span class="font-bold">RM <span id="resInvest">0.00</span></span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 border-b border-app-border/50">
+                            <span class="text-app-gray text-sm">Caj perkhidmatan</span>
+                            <span class="font-bold text-app-red">RM <span id="resChargeRM">0.00</span> (<span id="resChargePct">0.00</span>%)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 border-b border-app-border/50">
+                            <span class="text-app-gray text-sm">Amaun bersih masuk fund</span>
+                            <span class="font-bold text-app-green">RM <span id="resNetInvest">0.00</span></span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 border-b border-app-border/50">
+                            <span class="text-app-gray text-sm">NAV semasa</span>
+                            <span class="font-bold">RM <span id="resNAV">0.0000</span></span>
+                        </div>
+                        <div class="flex justify-between items-center p-3">
+                            <span class="text-app-gray text-sm">Unit baharu diterima</span>
+                            <span class="font-bold text-app-accent"><span id="resNewUnits">0.00</span> unit</span>
+                        </div>
                     </div>
+                </div>
+
+                <!-- PERBANDINGAN ACU -->
+                <div class="flex-1 flex flex-col">
+                    <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-3">Perbandingan ACU</h3>
                     
-                    <div class="p-5 md:p-6 border-b border-slate-50 bg-gradient-to-b from-white to-slate-50/30">
-                        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
-                            <div>
-                                <span class="text-[10px] font-bold text-amber-600 uppercase block mb-1 tracking-wider">Nilai Pelan RCA (Aktif)</span>
-                                <p class="text-3xl md:text-4xl font-black text-slate-900 leading-none transition-all duration-300" id="valActive10">RM 0.00</p>
-                            </div>
-                            <div class="bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 min-w-[120px]">
-                                <span class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Unit Terkumpul</span>
-                                <p class="text-lg font-black text-slate-800" id="newUnitsCount">0.00</p>
-                            </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                        <div class="flex-1 w-full bg-[#0F111A] rounded-xl p-5 border border-app-border text-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">ACU Lama</p>
+                            <p class="text-2xl font-bold">RM <span id="compOldACU">0.0000</span></p>
+                        </div>
+                        
+                        <div class="text-app-gray hidden sm:block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </div>
+                        <div class="text-app-gray sm:hidden rotate-90">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
                         </div>
 
-                        <!-- Kos Purata Section -->
-                        <div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <div class="text-left w-full sm:w-auto">
-                                <span class="text-[9px] font-bold text-slate-400 uppercase block mb-0.5 tracking-tighter">Avg Cost/Unit Baru (Setelah RCA)</span>
-                                <p class="text-xl font-black text-slate-900 leading-none" id="newAvgCost">0.0000</p>
-                            </div>
-                            <div class="h-px w-full sm:h-8 sm:w-px bg-slate-200"></div>
-                            <div class="text-left w-full sm:w-auto flex-1">
-                                <div id="costStatus" class="flex items-center gap-2">
-                                    <span id="costSign" class="text-lg font-black"></span>
-                                    <span id="costDiff" class="text-sm font-black">0.0000</span>
-                                </div>
-                                <span id="costLabelText" class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Perubahan Avg Cost/Unit</span>
-                            </div>
+                        <div class="flex-1 w-full bg-[#0F111A] rounded-xl p-5 border border-app-border text-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">ACU Baharu</p>
+                            <p class="text-2xl font-bold">RM <span id="compNewACU">0.0000</span></p>
                         </div>
                     </div>
 
-                    <div class="p-5 bg-slate-100/30">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-[9px] font-bold text-slate-500 uppercase block">Nilai Pelan Kekal (Tanpa Top-up)</span>
-                                <p class="text-lg font-bold text-slate-600" id="valStatic10">RM 0.00</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[9px] font-bold text-slate-500 uppercase block">Avg Cost/Unit Kekal</span>
-                                <p class="text-sm font-bold text-slate-700" id="staticAvgCost">0.0000</p>
-                            </div>
+                    <!-- Status Alert Box -->
+                    <div id="statusAlert" class="rounded-xl p-4 border flex items-start gap-4">
+                        <div id="statusIcon" class="mt-0.5">
+                            <!-- Icon injected by JS -->
+                        </div>
+                        <div>
+                            <h4 id="statusTitle" class="font-bold text-lg"></h4>
+                            <p id="statusDesc" class="text-sm opacity-90"></p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Strategic Summary -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-blue-900 p-6 rounded-2xl text-white shadow-lg text-left">
-                        <h4 class="text-[10px] font-black text-blue-300 uppercase mb-4 tracking-[0.2em] flex items-center gap-2">
-                            <i class="fas fa-lightbulb"></i> Kuasa RCA
-                        </h4>
-                        <p id="rcaSummaryText" class="text-xs font-medium leading-relaxed">
-                            <!-- Kandungan dinamik akan diisi oleh JavaScript -->
-                        </p>
-                    </div>
-                    <div class="bg-emerald-900 p-6 rounded-2xl text-white shadow-lg flex flex-col justify-between items-center text-center">
-                        <div class="w-full">
-                            <h4 class="text-[10px] font-black text-emerald-300 uppercase mb-3 tracking-[0.2em]">Gandaan Aset</h4>
-                            <div class="flex items-center justify-center gap-2">
-                                <p class="text-4xl font-black" id="unitMult">0x</p>
-                            </div>
+                <!-- SELEPAS PENAMBAHAN -->
+                <div class="mt-auto pt-2">
+                    <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-3">Selepas Penambahan</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-[#0F111A] rounded-xl p-5 border border-app-border flex flex-col justify-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">Jumlah Unit</p>
+                            <p class="text-lg font-bold" id="resTotalUnits">0.00</p>
+                            <p class="text-xs text-app-gray mt-1">unit</p>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-emerald-800 w-full">
-                            <p class="text-[10px] font-bold text-emerald-400" id="addedUnits">+0 Unit Dijana</p>
+                        <div class="bg-[#0F111A] rounded-xl p-5 border border-app-border flex flex-col justify-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">ACU Baharu</p>
+                            <p class="text-lg font-bold">RM <span id="resTotalACU">0.0000</span></p>
+                            <p class="text-xs text-app-gray mt-1">RM/unit</p>
+                        </div>
+                        <div class="bg-[#0F111A] rounded-xl p-5 border border-app-border flex flex-col justify-center">
+                            <p class="text-xs text-app-gray uppercase mb-1">Jumlah Modal</p>
+                            <p class="text-lg font-bold">RM <span id="resTotalCapital">0.00</span></p>
+                            <p class="text-xs text-app-gray mt-1">kos kasar</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Opportunity Cost Section -->
-                <section class="bg-white border-2 border-amber-600 p-6 md:p-8 rounded-2xl relative overflow-hidden shadow-sm">
-                    <div class="relative z-10 text-center space-y-3">
-                        <div class="inline-block bg-amber-100 text-amber-800 text-[9px] font-black px-3 py-1 rounded-full uppercase mb-2 tracking-widest">Opportunity Cost</div>
-                        <h3 class="text-slate-500 font-bold text-xs uppercase">Potensi Keuntungan Yang Hangus</h3>
-                        <p class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight" id="oppCost10">RM 0.00</p>
-                    </div>
-                </section>
             </div>
         </div>
 
-        <footer class="mt-16 pt-8 border-t border-slate-200 text-center">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.5em] mb-2">FMC UT Advisor Pro • Analytics Dashboard</p>
-            <p class="text-[8px] text-slate-300 font-bold uppercase tracking-widest">Copyright © HCH • All Rights Reserved</p>
-        </footer>
+        <!-- BAHAGIAN BAWAH: SIMULASI PELBAGAI JUMLAH -->
+        <div id="simulationSection" class="bg-app-card rounded-2xl p-6 border border-app-border shadow-xl hidden animate-fade-in">
+            <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-4">Simulasi Pelbagai Jumlah Pelaburan</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-[#0F111A] text-app-gray uppercase text-xs">
+                        <tr>
+                            <th class="px-4 py-3 rounded-tl-lg rounded-bl-lg font-semibold">Pelaburan (RM)</th>
+                            <th class="px-4 py-3 font-semibold">Unit Baharu</th>
+                            <th class="px-4 py-3 font-semibold">ACU Baharu (RM)</th>
+                            <th class="px-4 py-3 font-semibold">Beza ACU</th>
+                            <th class="px-4 py-3 rounded-tr-lg rounded-br-lg text-center font-semibold">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="simulationTable" class="divide-y divide-app-border/50">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
+    <!-- Scripts -->
     <script>
-        let currentMode = 'epf'; 
-
-        const inputIds = [
-            'currentUnits', 'currentNAV', 'initialCapital', 'avgCostNow', 
-            'topupAmount', 'expectedROI', 'priceSim', 'avgPurchasePrice'
-        ];
-
-        function setMode(mode) {
-            currentMode = mode;
-            const btnEpf = document.getElementById('btnEpf');
-            const btnCash = document.getElementById('btnCash');
-            const topupLabel = document.getElementById('topupLabel');
-            const badgeMode = document.getElementById('badgeMode');
-
-            if (mode === 'epf') {
-                btnEpf.classList.add('mode-active');
-                btnCash.classList.remove('mode-active');
-                topupLabel.innerText = "Top-up Suku Tahunan (RM)";
-                badgeMode.innerText = "MODE EPF";
-                badgeMode.className = "text-[9px] bg-slate-900 text-white px-2.5 py-1 rounded-full font-bold uppercase tracking-tight";
-            } else {
-                btnCash.classList.add('mode-active');
-                btnEpf.classList.remove('mode-active');
-                topupLabel.innerText = "Top-up Bulanan (RM)";
-                badgeMode.innerText = "MODE TUNAI";
-                badgeMode.className = "text-[9px] bg-emerald-700 text-white px-2.5 py-1 rounded-full font-bold uppercase tracking-tight";
-            }
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            // Run calculation immediately for default values
             calculate();
+        });
+
+        function formatCurrency(num, decimals = 2) {
+            return num.toLocaleString('en-MY', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
         }
 
-        function formatCurrency(value) {
-            return "RM " + value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function formatUnits(value) {
-            return value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // Main Calculation Logic
+        function performCalc(oldUnits, oldACU, nav, investAmount, chargePct) {
+            const chargeRM = investAmount * (chargePct / 100);
+            const netInvest = investAmount - chargeRM;
+            const newUnits = netInvest / nav;
+            
+            const oldCapital = oldUnits * oldACU;
+            const newTotalCapital = oldCapital + investAmount; // Kasar total modal
+            const newTotalUnits = oldUnits + newUnits;
+            const newACU = newTotalCapital / newTotalUnits;
+            
+            const acuDiff = oldACU - newACU;
+            const acuDiffPct = (acuDiff / oldACU) * 100;
+            const oldPortfolioValue = oldUnits * nav;
+            
+            return {
+                chargeRM, netInvest, newUnits, oldCapital, newTotalCapital, 
+                newTotalUnits, newACU, acuDiff, acuDiffPct, oldPortfolioValue
+            };
         }
 
         function calculate() {
-            const getVal = (id) => {
-                const el = document.getElementById(id);
-                return el ? parseFloat(el.value) || 0 : 0;
-            };
-
-            // Ambil input
-            const unitsNow = getVal('currentUnits');
-            const navNow = getVal('currentNAV');
-            const capitalInitial = getVal('initialCapital');
-            const avgCostExisting = getVal('avgCostNow');
-            const topupAmount = getVal('topupAmount');
-            const annualRoi = getVal('expectedROI') / 100;
-            const targetPrice = getVal('priceSim');
-            const buyPriceRCA = getVal('avgPurchasePrice') || navNow;
-
-            // Update Label Slider
-            document.getElementById('simVal').innerText = "RM " + targetPrice.toFixed(4);
-
-            // 1. Nilai Pasaran Semasa
-            const marketValueNow = unitsNow * navNow;
-            document.getElementById('displayMarketValue').innerText = formatCurrency(marketValueNow);
-
-            // 2. Logik Masa & Kekerapan
-            const years = 10;
-            const freq = (currentMode === 'epf') ? 4 : 12;
-            const totalTopup = topupAmount * freq * years;
-            const totalModalAll = capitalInitial + totalTopup;
+            // Get Inputs
+            const oldUnits = parseFloat(document.getElementById('inputUnit').value) || 0;
+            const oldACU = parseFloat(document.getElementById('inputACU').value) || 0;
+            const nav = parseFloat(document.getElementById('inputNAV').value) || 0;
+            const invest = parseFloat(document.getElementById('inputInvest').value) || 0;
+            const currentCharge = parseFloat(document.getElementById('inputCharge').value) || 0;
             
-            document.getElementById('displayTotalInvested').innerText = formatCurrency(totalModalAll);
+            if (oldUnits <= 0 || oldACU <= 0 || nav <= 0 || invest <= 0) return;
 
-            // 3. Unjuran Pelan Kekal (Static)
-            // FV = P(1+r)^t + (units * targetPrice)
-            // Namun untuk simulasi ini, kita fokus pada nilai unit sedia ada berkembang
-            const valStatic10 = unitsNow * targetPrice * Math.pow(1 + annualRoi, years);
-            document.getElementById('valStatic10').innerText = formatCurrency(valStatic10);
-            document.getElementById('staticAvgCost').innerText = avgCostExisting.toFixed(4);
+            // Run main logic
+            const res = performCalc(oldUnits, oldACU, nav, invest, currentCharge);
 
-            // 4. Unjuran Pelan RCA (Aktif)
-            const unitsFromTopup = buyPriceRCA > 0 ? totalTopup / buyPriceRCA : 0;
-            const totalUnits10 = unitsNow + unitsFromTopup;
-            
-            document.getElementById('newUnitsCount').innerText = formatUnits(totalUnits10);
-            
-            const valActive10 = totalUnits10 * targetPrice * Math.pow(1 + annualRoi, years);
-            document.getElementById('valActive10').innerText = formatCurrency(valActive10);
+            // Populate SEBELUM PENAMBAHAN
+            document.getElementById('resOldUnits').innerText = formatCurrency(oldUnits);
+            document.getElementById('resOldACU').innerText = formatCurrency(oldACU, 4);
+            document.getElementById('resOldValue').innerText = formatCurrency(res.oldPortfolioValue);
 
-            // 5. Analisis Kos Purata Baru
-            // Kos Purata Baru = Jumlah Modal / Jumlah Unit
-            const newAvgCost = totalUnits10 > 0 ? totalModalAll / totalUnits10 : 0;
-            document.getElementById('newAvgCost').innerText = newAvgCost.toFixed(4);
-            
-            // Perbezaan Kos & Logik 'Brainwash' Dinamik
-            const diff = newAvgCost - avgCostExisting;
-            const signEl = document.getElementById('costSign');
-            const diffEl = document.getElementById('costDiff');
-            const statusBox = document.getElementById('costStatus');
-            const costLabelText = document.getElementById('costLabelText');
-            const rcaSummaryText = document.getElementById('rcaSummaryText');
+            // Populate BUTIRAN PELABURAN BAHARU
+            document.getElementById('resInvest').innerText = formatCurrency(invest);
+            document.getElementById('resChargeRM').innerText = formatCurrency(res.chargeRM);
+            document.getElementById('resChargePct').innerText = formatCurrency(currentCharge);
+            document.getElementById('resNetInvest').innerText = formatCurrency(res.netInvest);
+            document.getElementById('resNAV').innerText = formatCurrency(nav, 4);
+            document.getElementById('resNewUnits').innerText = formatCurrency(res.newUnits);
 
-            if (Math.abs(diff) < 0.00001) {
-                signEl.innerText = "";
-                diffEl.innerText = "0.0000";
-                statusBox.className = "flex items-center gap-2 text-slate-400 font-bold";
-                costLabelText.innerText = "Avg Cost/Unit Tidak Berubah";
-                
-                rcaSummaryText.innerHTML = `RCA mengekalkan Avg Cost/Unit anda pada <span class="text-emerald-400 font-bold">${newAvgCost.toFixed(4)}</span> sambil terus <strong>menggandakan jumlah unit aset</strong> anda secara agresif!`;
-            } else if (diff < 0) {
-                signEl.innerText = "-";
-                diffEl.innerText = Math.abs(diff).toFixed(4);
-                statusBox.className = "flex items-center gap-2 text-emerald-600 font-bold";
-                costLabelText.innerText = "Penurunan Avg Cost/Unit";
-                
-                rcaSummaryText.innerHTML = `RCA membantu <strong>menurunkan Avg Cost/Unit</strong> anda daripada <span class="text-amber-400 font-bold">${avgCostExisting.toFixed(4)}</span> kepada <span class="text-emerald-400 font-bold">${newAvgCost.toFixed(4)}</span>, memberikan anda margin keuntungan yang lebih besar!`;
+            // Populate PERBANDINGAN ACU
+            document.getElementById('compOldACU').innerText = formatCurrency(oldACU, 4);
+            document.getElementById('compNewACU').innerText = formatCurrency(res.newACU, 4);
+
+            const alertBox = document.getElementById('statusAlert');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusDesc = document.getElementById('statusDesc');
+
+            if (res.acuDiff > 0) {
+                // Averaging Down (Good)
+                alertBox.className = 'rounded-xl p-4 border flex items-start gap-4 bg-app-greenBg border-app-greenBorder text-app-green';
+                statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>`;
+                statusTitle.innerText = 'ACU Turun — Averaging Down Berjaya!';
+                statusDesc.innerText = `ACU berkurang RM ${formatCurrency(Math.abs(res.acuDiff), 4)} (${formatCurrency(Math.abs(res.acuDiffPct))}%) — anda beli lebih murah dari kos purata sedia ada.`;
+            } else if (res.acuDiff < 0) {
+                // Averaging Up
+                alertBox.className = 'rounded-xl p-4 border flex items-start gap-4 bg-app-redBg border-app-redBorder text-app-red';
+                statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>`;
+                statusTitle.innerText = 'ACU Naik — Averaging Up';
+                statusDesc.innerText = `ACU meningkat RM ${formatCurrency(Math.abs(res.acuDiff), 4)} (${formatCurrency(Math.abs(res.acuDiffPct))}%) — kos purata anda menjadi lebih tinggi.`;
             } else {
-                signEl.innerText = "+";
-                diffEl.innerText = Math.abs(diff).toFixed(4);
-                statusBox.className = "flex items-center gap-2 text-rose-500 font-bold";
-                costLabelText.innerText = "Kenaikan Avg Cost/Unit Terkawal";
-                
-                rcaSummaryText.innerHTML = `Walaupun pasaran sedang naik, RCA <strong>mengunci Avg Cost/Unit anda pada tahap rendah</strong> (<span class="text-emerald-400 font-bold">${newAvgCost.toFixed(4)}</span>) berbanding harga sasaran pasaran (<span class="text-amber-400 font-bold">${targetPrice.toFixed(4)}</span>)!`;
+                // Tiada Perubahan
+                alertBox.className = 'rounded-xl p-4 border flex items-start gap-4 bg-[#0F111A] border-app-border text-app-gray';
+                statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14" /></svg>`;
+                statusTitle.innerText = 'ACU Kekal';
+                statusDesc.innerText = `Tiada perubahan pada kos purata anda.`;
             }
 
-            // Gandaan Aset
-            document.getElementById('addedUnits').innerText = "+" + formatUnits(unitsFromTopup) + " Unit Dijana";
-            const multiplier = unitsNow > 0 ? totalUnits10 / unitsNow : 0;
-            document.getElementById('unitMult').innerText = multiplier.toFixed(1) + "x";
+            // Populate SELEPAS PENAMBAHAN
+            document.getElementById('resTotalUnits').innerText = formatCurrency(res.newTotalUnits);
+            document.getElementById('resTotalACU').innerText = formatCurrency(res.newACU, 4);
+            document.getElementById('resTotalCapital').innerText = formatCurrency(res.newTotalCapital);
 
-            // 6. Opportunity Cost
-            const oppCost = valActive10 - valStatic10;
-            document.getElementById('oppCost10').innerText = formatCurrency(oppCost);
+            // Generate Simulation Table
+            generateSimulation(oldUnits, oldACU, nav, currentCharge);
+
+            // Show results
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('simulationSection').classList.remove('hidden');
         }
 
-        // Jalankan apabila DOM sedia
-        window.addEventListener('DOMContentLoaded', () => {
-            inputIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', calculate);
+        function generateSimulation(oldUnits, oldACU, nav, chargePct) {
+            const table = document.getElementById('simulationTable');
+            table.innerHTML = '';
+            
+            const amounts = [1000, 5000, 10000, 20000, 50000, 100000];
+            
+            amounts.forEach(amt => {
+                const res = performCalc(oldUnits, oldACU, nav, amt, chargePct);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-app-border/20 transition-colors';
+                
+                let statusBadge = '';
+                if (res.acuDiff > 0) {
+                    statusBadge = `<span class="px-2 py-1 bg-app-greenBg text-app-green text-xs rounded-md border border-app-greenBorder font-semibold">Turun</span>`;
+                } else if (res.acuDiff < 0) {
+                    statusBadge = `<span class="px-2 py-1 bg-app-redBg text-app-red text-xs rounded-md border border-app-redBorder font-semibold">Naik</span>`;
+                } else {
+                    statusBadge = `<span class="px-2 py-1 bg-app-card text-app-gray text-xs rounded-md border border-app-border font-semibold">Kekal</span>`;
                 }
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium">RM ${formatCurrency(amt)}</td>
+                    <td class="px-4 py-3 text-app-gray">${formatCurrency(res.newUnits)}</td>
+                    <td class="px-4 py-3 font-semibold text-white">${formatCurrency(res.newACU, 4)}</td>
+                    <td class="px-4 py-3 ${res.acuDiff > 0 ? 'text-app-green' : (res.acuDiff < 0 ? 'text-app-red' : 'text-app-gray')}">
+                        ${res.acuDiff > 0 ? '-' : (res.acuDiff < 0 ? '+' : '')}${formatCurrency(Math.abs(res.acuDiff), 4)}
+                    </td>
+                    <td class="px-4 py-3 text-center">${statusBadge}</td>
+                `;
+                table.appendChild(tr);
             });
-            calculate();
-        });
+        }
     </script>
 </body>
 </html>
